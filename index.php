@@ -3,8 +3,22 @@ include("conexion.php");
 $mensaje = $_GET['mensaje'] ?? '';
 $tipo = $_GET['tipo'] ?? '';
 
-$sql = "SELECT * FROM Personas";
-$resultado = $conexion->query($sql);
+$nombre = $_GET['nombre'] ?? '';
+
+if (!empty($nombre)) {
+
+    $sql = "SELECT * FROM Personas WHERE nombre LIKE :nombre";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute([':nombre' => $nombre . '%']);
+
+    $resultado = $stmt;
+
+} else {
+
+    $sql = "SELECT * FROM Personas";
+    $resultado = $conexion->query($sql);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +29,22 @@ $resultado = $conexion->query($sql);
 </head>
 <body>
     <h1>REGISTROS DE PERSONAS</h1>
+    <form method="GET" class="buscador">
+
+    <input type="text"
+           name="nombre"
+           placeholder="Ingrese el nombre"
+           value="<?= htmlspecialchars($nombre) ?>">
+
+    <button type="submit">
+        Buscar
+    </button>
+
+    <a href="index.php">
+        Mostrar todos
+    </a>
+
+</form>
         <a href="FormularioRegistrar.php" class=btn-registro>Registrar Persona</a>
     <hr style="border: 0; border-top: 2px solid black;">
 
@@ -104,5 +134,33 @@ $resultado = $conexion->query($sql);
 
     a {
     text-decoration: none;
-    }   
+    }  
+    .buscador {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.buscador input {
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.buscador button {
+    padding: 8px 15px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.buscador a {
+    padding: 8px 15px;
+    background-color: grey;
+    color: white;
+    border-radius: 4px;
+    margin-left: 5px;
+}
 </style>
